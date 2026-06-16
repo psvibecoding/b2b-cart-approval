@@ -1,0 +1,49 @@
+{% comment %}
+  App Block: B2B Cart Approval
+  Insert in Cart page via Online Store > Themes > Customize > Cart
+{% endcomment %}
+
+{% if customer and customer.tags contains settings.junior_tag %}
+<div id="b2b-approval-block" data-shop="{{ shop.permanent_domain }}" data-app-proxy-url="{{ shop.url }}/apps/b2b-approval">
+  <div id="b2b-approval-form" style="display:none; margin-top:16px; padding:16px; border:1px solid #e0e0e0; border-radius:4px;">
+    <h3 style="margin:0 0 12px">Invia per approvazione</h3>
+    <label for="b2b-manager-email" style="display:block; margin-bottom:4px; font-size:14px;">Email del manager *</label>
+    <input
+      type="email"
+      id="b2b-manager-email"
+      placeholder="manager@azienda.com"
+      style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; margin-bottom:8px; box-sizing:border-box;"
+    />
+    <label for="b2b-note" style="display:block; margin-bottom:4px; font-size:14px;">Nota (opzionale)</label>
+    <textarea
+      id="b2b-note"
+      rows="2"
+      style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; margin-bottom:12px; box-sizing:border-box;"
+    ></textarea>
+    <button
+      id="b2b-submit-btn"
+      style="background:#008060; color:#fff; border:none; padding:12px 24px; border-radius:4px; font-size:16px; cursor:pointer; width:100%;"
+    >
+      Invia per Approvazione
+    </button>
+    <div id="b2b-feedback" style="margin-top:8px; font-size:14px;"></div>
+  </div>
+</div>
+
+<script src="{{ 'cart-approval.js' | asset_url }}" defer></script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "B2B Cart Approval",
+  "target": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "junior_tag",
+      "label": "Tag cliente junior B2B",
+      "default": "b2b-junior"
+    }
+  ]
+}
+{% endschema %}
