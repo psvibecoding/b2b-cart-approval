@@ -1,0 +1,60 @@
+import { json } from '@remix-run/node'
+import { createApprovalRequest } from '../models/approvalRequest.server.js'
+import { sendApprovalEmail } from '../services/email.server.js'
+import { validateProxySignature } from '../utils/proxy.server.js'
+
+export async function action({ request }) {
+  if (request.method !== 'POST') {
+    return json({ ok: false, error: 'Method not allowed' }, { status: 405 })
+  }
+
+  if (!validateProxySignature(request)) {
+    return json({ ok: false, error: 'Invalid signature' }, { status: 401 })
+  }
+
+  let body
+  try {
+    body = await request.json()
+  } catch {
+    return json({ ok: false, error: 'Invalid JSON' }, { status: 400 })
+  }
+
+  const { shopDomain, managerEmail, requesterEmail, requesterName, requesterNote, cartItems, totalPrice, currency } = body
+
+  if (!managerEmail || !shopDomain) {
+    return json({ ok: false, error: 'managerEmail and shopDomain are required' }, { status: 400 })
+  }
+
+  if (!Array.isArray(cartItems) || cartItems.length === 0) {
+    return json({ ok: false, error: 'cartItems must be a non-empty array' }, { status: 400 })
+  }
+
+  const approvalRequest = await createApprovalRequest({
+    shopDomain,
+    managerEmail,
+    cartItems,
+    currency: currency ?? 'EUR',
+    totalPrice: totalPrice ?? '0.00',
+    requesterEmail,
+    requesterName,
+    requesterNote,
+  })
+
+  const shopQuery = new URL(request.url).searchParams.get('shop') ?? shopDomain
+  const approvalUrl = `https://${shopQuery}/apps/b2b-approval/approve?token=${approvalRequest.token}`
+
+  await sendApprovalEmail({
+    to: managerEmail,
+    requesterName: requesterName ?? requesterEmail ?? 'A team member',
+    totalPrice: totalPrice ?? '0.00',
+    currency: currency ?? 'EUR',
+    approvalUrl,
+  })
+
+  return json({ ok: true, token: approvalRequest.token }, { status: 200 })
+}
+
+// No loader — this is a POST-only endpoint
+export function loader() {
+  return json({ ok: false, error: 'Use POST' }, { status: 405 })
+}
