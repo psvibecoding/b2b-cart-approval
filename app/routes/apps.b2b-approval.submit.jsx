@@ -19,7 +19,9 @@ export async function action({ request }) {
     return json({ ok: false, error: 'Invalid JSON' }, { status: 400 })
   }
 
-  const { shopDomain, managerEmail, requesterEmail, requesterName, requesterNote, cartItems, totalPrice, currency } = body
+  const trustedShop = new URL(request.url).searchParams.get('shop')
+  const { shopDomain: bodyShopDomain, managerEmail, requesterEmail, requesterName, requesterNote, cartItems, totalPrice, currency } = body
+  const shopDomain = trustedShop ?? bodyShopDomain
 
   if (!managerEmail || !shopDomain) {
     return json({ ok: false, error: 'managerEmail and shopDomain are required' }, { status: 400 })
@@ -40,8 +42,7 @@ export async function action({ request }) {
     requesterNote,
   })
 
-  const shopQuery = new URL(request.url).searchParams.get('shop') ?? shopDomain
-  const approvalUrl = `https://${shopQuery}/apps/b2b-approval/approve?token=${approvalRequest.token}`
+  const approvalUrl = `https://${shopDomain}/apps/b2b-approval/approve?token=${approvalRequest.token}`
 
   await sendApprovalEmail({
     to: managerEmail,

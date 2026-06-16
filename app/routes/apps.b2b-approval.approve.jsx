@@ -70,7 +70,7 @@ export async function action({ request }) {
   const intent = formData.get('intent')
 
   const approvalRequest = await getByToken(token)
-  if (!approvalRequest || approvalRequest.status !== 'PENDING') {
+  if (!approvalRequest || approvalRequest.status !== 'PENDING' || approvalRequest.expiresAt < new Date()) {
     return new Response('Richiesta non valida.', { status: 400 })
   }
 
@@ -83,11 +83,17 @@ export async function action({ request }) {
     const { admin } = await shopify.unauthenticated.admin(approvalRequest.shopDomain)
 
     const items = JSON.parse(approvalRequest.cartItems)
-    const { draftOrderId, invoiceUrl } = await createDraftOrder(
-      admin,
-      items,
-      approvalRequest.requesterEmail
-    )
+    let draftOrderId, invoiceUrl
+    try {
+      const result = await createDraftOrder(admin, items, approvalRequest.requesterEmail)
+      draftOrderId = result.draftOrderId
+      invoiceUrl = result.invoiceUrl
+    } catch (err) {
+      return new Response(
+        `<html><body><h2>Errore durante l'approvazione</h2><p>${escapeHtml(err.message)}</p><p><a href="javascript:history.back()">Torna indietro</a></p></body></html>`,
+        { status: 500, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+      )
+    }
 
     await updateStatus(approvalRequest.id, 'APPROVED', { draftOrderId, draftOrderInvoiceUrl: invoiceUrl })
 

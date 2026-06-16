@@ -5,8 +5,10 @@ import shopify from '../shopify.server.js'
 import db from '../db.server.js'
 
 export async function loader({ request, params }) {
-  await shopify.authenticate.admin(request)
-  const req = await db.approvalRequest.findUnique({ where: { id: Number(params.id) } })
+  const { session } = await shopify.authenticate.admin(request)
+  const req = await db.approvalRequest.findFirst({
+    where: { id: Number(params.id), shopDomain: session.shop },
+  })
   if (!req) throw new Response('Not found', { status: 404 })
   return json({ req })
 }
