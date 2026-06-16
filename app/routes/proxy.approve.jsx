@@ -3,6 +3,15 @@ import { getByToken, updateStatus } from '../models/approvalRequest.server.js'
 import { createDraftOrder } from '../services/draftOrder.server.js'
 import shopify from '../shopify.server.js'
 
+function escapeHtml(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+}
+
 export async function loader({ request }) {
   const token = new URL(request.url).searchParams.get('token')
   const approvalRequest = token ? await getByToken(token) : null
@@ -23,7 +32,7 @@ export async function loader({ request }) {
 
   const items = JSON.parse(approvalRequest.cartItems)
   const rows = items
-    .map(i => `<tr><td>${i.productTitle ?? i.variantId}</td><td>${i.quantity}</td><td>${i.price} ${approvalRequest.currency}</td></tr>`)
+    .map(i => `<tr><td>${escapeHtml(i.productTitle ?? i.variantId)}</td><td>${i.quantity}</td><td>${i.price} ${approvalRequest.currency}</td></tr>`)
     .join('')
 
   const html = `<!DOCTYPE html>
@@ -36,14 +45,14 @@ table{width:100%;border-collapse:collapse}th,td{padding:8px;border:1px solid #dd
 </head>
 <body>
 <h2>Richiesta di approvazione carrello</h2>
-<p>Da: <strong>${approvalRequest.requesterName ?? approvalRequest.requesterEmail}</strong></p>
-${approvalRequest.requesterNote ? `<p>Nota: ${approvalRequest.requesterNote}</p>` : ''}
+<p>Da: <strong>${escapeHtml(approvalRequest.requesterName ?? approvalRequest.requesterEmail)}</strong></p>
+${approvalRequest.requesterNote ? `<p>Nota: ${escapeHtml(approvalRequest.requesterNote)}</p>` : ''}
 <table><thead><tr><th>Prodotto</th><th>Qtà</th><th>Prezzo</th></tr></thead>
 <tbody>${rows}</tbody>
 <tfoot><tr><td colspan="2"><strong>Totale</strong></td><td><strong>${approvalRequest.totalPrice} ${approvalRequest.currency}</strong></td></tr></tfoot>
 </table>
 <form method="POST" style="margin-top:24px">
-  <input type="hidden" name="token" value="${approvalRequest.token}" />
+  <input type="hidden" name="token" value="${escapeHtml(approvalRequest.token)}" />
   <button name="intent" value="approve" class="btn approve">Approva e Paga</button>
   <button name="intent" value="reject" class="btn reject">Rifiuta</button>
 </form>

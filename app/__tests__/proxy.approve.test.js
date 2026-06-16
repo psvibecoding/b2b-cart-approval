@@ -85,6 +85,6 @@ describe('proxy.approve action — reject', () => {
     const req = new Request('https://app.com/proxy/approve', { method: 'POST', body: formData })
     const res = await action({ request: req })
     expect(res.status).toBe(302)
-    expect(res.headers.get('Location')).toContain('test.myshopify.com')
+    expect(res.headers.get('Location')).toBe('https://test.myshopify.com?b2b_approval=rejected')
   })
 })
