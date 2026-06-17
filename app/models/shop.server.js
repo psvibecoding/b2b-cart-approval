@@ -7,3 +7,15 @@ export async function upsertShop(shopDomain) {
     create: { shopDomain },
   })
 }
+
+export async function getShopSettings(shopDomain) {
+  return db.shop.findUnique({ where: { shopDomain } })
+}
+
+export async function updateShopSettings(shopDomain, juniorTag) {
+  return db.shop.upsert({
+    where: { shopDomain },
+    update: { juniorTag },
+    create: { shopDomain, juniorTag },
+  })
+}
