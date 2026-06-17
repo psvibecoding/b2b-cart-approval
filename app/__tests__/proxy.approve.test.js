@@ -16,7 +16,7 @@ vi.mock('../shopify.server.js', () => ({
   },
 }))
 
-import { loader, action } from '../routes/apps.b2b-approval.approve.jsx'
+import { loader, action } from '../routes/approve.jsx'
 import { getByToken, updateStatus } from '../models/approvalRequest.server.js'
 import { createDraftOrder } from '../services/draftOrder.server.js'
 

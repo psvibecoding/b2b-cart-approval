@@ -10,7 +10,7 @@ vi.mock('../utils/proxy.server.js', () => ({
   validateProxySignature: vi.fn().mockReturnValue(true),
 }))
 
-import { action } from '../routes/apps.b2b-approval.submit.jsx'
+import { action } from '../routes/submit.jsx'
 import { createApprovalRequest } from '../models/approvalRequest.server.js'
 
 const validBody = {
