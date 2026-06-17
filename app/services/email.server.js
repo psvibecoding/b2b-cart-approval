@@ -1,4 +1,4 @@
-import sgMail from '@sendgrid/mail'
+import { Resend } from 'resend'
 
 export async function sendApprovalEmail({ to, requesterName, totalPrice, currency, approvalUrl }) {
   const subject = '[B2B Cart Approval] Nuova richiesta di approvazione'
@@ -28,15 +28,15 @@ Il link scade tra 7 giorni.
 </div>
 `.trim()
 
-  if (!process.env.SENDGRID_API_KEY) {
+  if (!process.env.RESEND_API_KEY) {
     console.log(`\n=== EMAIL TO: ${to} ===\n${text}\n===================\n`)
     return
   }
 
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY)
-  await sgMail.send({
+  const resend = new Resend(process.env.RESEND_API_KEY)
+  await resend.emails.send({
     to,
-    from: process.env.SENDGRID_FROM_EMAIL || 'noreply@lederly.com',
+    from: process.env.RESEND_FROM_EMAIL || 'noreply@lederly.com',
     subject,
     text,
     html,
