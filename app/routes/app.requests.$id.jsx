@@ -61,7 +61,7 @@ export default function RequestDetail() {
                   <BlockStack gap="100">
                     <Text variant="bodySm" tone="subdued">Submitted</Text>
                     <Text>
-                      {new Date(req.createdAt).toLocaleDateString('en-GB', {
+                      {new Date(req.createdAt).toLocaleString('en-GB', {
                         day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
                       })}
                     </Text>
