@@ -31,26 +31,36 @@ export async function action({ request }) {
     return json({ ok: false, error: 'cartItems must be a non-empty array' }, { status: 400 })
   }
 
-  const approvalRequest = await createApprovalRequest({
-    shopDomain,
-    managerEmail,
-    cartItems,
-    currency: currency ?? 'EUR',
-    totalPrice: totalPrice ?? '0.00',
-    requesterEmail,
-    requesterName,
-    requesterNote,
-  })
+  let approvalRequest
+  try {
+    approvalRequest = await createApprovalRequest({
+      shopDomain,
+      managerEmail,
+      cartItems,
+      currency: currency ?? 'EUR',
+      totalPrice: totalPrice ?? '0.00',
+      requesterEmail,
+      requesterName,
+      requesterNote,
+    })
+  } catch (err) {
+    console.error('[submit] createApprovalRequest failed:', err.message)
+    return json({ ok: false, error: 'Failed to save request. Please try again.' }, { status: 500 })
+  }
 
   const approvalUrl = `https://${shopDomain}/apps/b2b-approval/approve?token=${approvalRequest.token}`
 
-  await sendApprovalEmail({
-    to: managerEmail,
-    requesterName: requesterName ?? requesterEmail ?? 'A team member',
-    totalPrice: totalPrice ?? '0.00',
-    currency: currency ?? 'EUR',
-    approvalUrl,
-  })
+  try {
+    await sendApprovalEmail({
+      to: managerEmail,
+      requesterName: requesterName ?? requesterEmail ?? 'A team member',
+      totalPrice: totalPrice ?? '0.00',
+      currency: currency ?? 'EUR',
+      approvalUrl,
+    })
+  } catch (err) {
+    console.error('[submit] sendApprovalEmail failed:', err.message)
+  }
 
   return json({ ok: true, token: approvalRequest.token }, { status: 200 })
 }
