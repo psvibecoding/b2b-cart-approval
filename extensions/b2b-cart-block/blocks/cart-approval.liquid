@@ -3,7 +3,7 @@
   Insert in Cart page via Online Store > Themes > Customize > Cart
 {% endcomment %}
 
-{% if customer and customer.tags contains settings.junior_tag %}
+{% if customer and customer.tags contains 'b2b-junior' %}
 <div id="b2b-approval-block" data-shop="{{ shop.permanent_domain }}" data-app-proxy-url="{{ shop.url }}/apps/b2b-approval">
   <div id="b2b-approval-form" style="display:none; margin-top:16px; padding:16px; border:1px solid #e0e0e0; border-radius:4px;">
     <h3 style="margin:0 0 12px">Invia per approvazione</h3>
