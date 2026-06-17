@@ -103,7 +103,7 @@ export async function loader({ request }) {
       <td class="img-cell">${img}</td>
       <td>${escapeHtml(i.productTitle ?? i.variantId)}</td>
       <td>${escapeHtml(i.variantTitle ?? '—')}</td>
-      <td style="text-align:right">${i.quantity}</td>
+      <td style="text-align:right">${escapeHtml(String(i.quantity))}</td>
       <td style="text-align:right">${escapeHtml(i.price)} ${escapeHtml(approvalRequest.currency)}</td>
     </tr>`
   }).join('')
