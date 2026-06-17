@@ -1,5 +1,6 @@
 import { json } from '@remix-run/node'
 import { createApprovalRequest } from '../models/approvalRequest.server.js'
+import { upsertShop } from '../models/shop.server.js'
 import { sendApprovalEmail } from '../services/email.server.js'
 import { validateProxySignature } from '../utils/proxy.server.js'
 
@@ -30,6 +31,8 @@ export async function action({ request }) {
   if (!Array.isArray(cartItems) || cartItems.length === 0) {
     return json({ ok: false, error: 'cartItems must be a non-empty array' }, { status: 400 })
   }
+
+  await upsertShop(shopDomain)
 
   let approvalRequest
   try {
