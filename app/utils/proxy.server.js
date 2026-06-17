@@ -1,8 +1,6 @@
 import crypto from 'node:crypto'
 
 export function validateProxySignature(request, secret = process.env.SHOPIFY_API_SECRET) {
-  if (process.env.NODE_ENV !== 'production') return true
-
   const { searchParams } = new URL(request.url)
   const params = Object.fromEntries(searchParams.entries())
   const signature = params.signature
