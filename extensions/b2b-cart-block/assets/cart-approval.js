@@ -5,7 +5,6 @@
   const shopDomain = block.dataset.shop
   const proxyBase = block.dataset.appProxyUrl
 
-  // Hide native checkout button(s) and show our form
   function interceptCheckout() {
     const selectors = [
       '[name="checkout"]',
@@ -34,6 +33,7 @@
         quantity: item.quantity,
         price: (item.price / 100).toFixed(2),
         currencyCode: cart.currency,
+        imageUrl: item.featured_image?.url ?? '',
       })),
       totalPrice: (cart.total_price / 100).toFixed(2),
       currency: cart.currency,
@@ -62,12 +62,12 @@
 
     if (!managerEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(managerEmail)) {
       feedback.style.color = '#d82c0d'
-      feedback.textContent = 'Inserisci un indirizzo email valido per il manager.'
+      feedback.textContent = 'Please enter a valid manager email address.'
       return
     }
 
     btn.disabled = true
-    btn.textContent = 'Invio in corso...'
+    btn.textContent = 'Sending...'
     feedback.textContent = ''
 
     try {
@@ -93,16 +93,16 @@
 
       if (json.ok) {
         feedback.style.color = '#008060'
-        feedback.textContent = 'Richiesta inviata! Il manager riceverà un link di approvazione via email.'
-        btn.textContent = 'Inviato ✓'
+        feedback.textContent = 'Request sent! The manager will receive an approval link by email.'
+        btn.textContent = 'Sent ✓'
       } else {
-        throw new Error(json.error ?? 'Errore sconosciuto')
+        throw new Error(json.error ?? 'Unknown error')
       }
     } catch (err) {
       feedback.style.color = '#d82c0d'
-      feedback.textContent = `Errore: ${err.message}`
+      feedback.textContent = `Error: ${err.message}`
       btn.disabled = false
-      btn.textContent = 'Invia per Approvazione'
+      btn.textContent = 'Submit for Approval'
     }
   })
 })()

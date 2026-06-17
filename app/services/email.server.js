@@ -1,30 +1,30 @@
 import { Resend } from 'resend'
 
 export async function sendApprovalEmail({ to, requesterName, totalPrice, currency, approvalUrl }) {
-  const subject = '[B2B Cart Approval] Nuova richiesta di approvazione'
+  const subject = '[B2B Cart Approval] New approval request'
   const text = `
-Hai ricevuto una richiesta di approvazione carrello B2B.
+You have received a B2B cart approval request.
 
-Richiesta di: ${requesterName}
-Totale: ${currency} ${totalPrice}
+Requested by: ${requesterName}
+Total: ${currency} ${totalPrice}
 
-Per approvare o rifiutare il carrello, clicca il link:
+To approve or reject the cart, click the link:
 ${approvalUrl}
 
-Il link scade tra 7 giorni.
+The link expires in 7 days.
 `.trim()
 
   const html = `
 <div style="font-family:sans-serif;max-width:600px;margin:0 auto;">
-  <h2 style="color:#008060;">Nuova richiesta di approvazione carrello B2B</h2>
-  <p><strong>Richiesta di:</strong> ${requesterName}</p>
-  <p><strong>Totale:</strong> ${currency} ${totalPrice}</p>
+  <h2 style="color:#008060;">New B2B Cart Approval Request</h2>
+  <p><strong>Requested by:</strong> ${requesterName}</p>
+  <p><strong>Total:</strong> ${currency} ${totalPrice}</p>
   <p style="margin-top:24px;">
     <a href="${approvalUrl}" style="background:#008060;color:#fff;padding:12px 24px;text-decoration:none;border-radius:4px;display:inline-block;">
-      Approva o Rifiuta il Carrello
+      Approve or Reject Cart
     </a>
   </p>
-  <p style="color:#999;font-size:12px;margin-top:32px;">Il link scade tra 7 giorni.</p>
+  <p style="color:#999;font-size:12px;margin-top:32px;">The link expires in 7 days.</p>
 </div>
 `.trim()
 

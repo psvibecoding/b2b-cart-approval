@@ -1,20 +1,20 @@
 {% comment %}
   App Block: B2B Cart Approval
-  Insert in Cart page via Online Store > Themes > Customize > Cart
+  Add to Cart page via Online Store > Themes > Customize > Cart
 {% endcomment %}
 
-{% if customer and customer.tags contains 'b2b-junior' %}
+{% if customer and customer.tags contains block.settings.junior_tag %}
 <div id="b2b-approval-block" data-shop="{{ shop.permanent_domain }}" data-app-proxy-url="{{ shop.url }}/apps/b2b-approval">
-  <div id="b2b-approval-form" style="display:none; margin-top:16px; padding:16px; border:1px solid #e0e0e0; border-radius:4px;">
-    <h3 style="margin:0 0 12px">Invia per approvazione</h3>
-    <label for="b2b-manager-email" style="display:block; margin-bottom:4px; font-size:14px;">Email del manager *</label>
+  <div id="b2b-approval-form" style="display:none; margin-top:16px; padding:16px; border:1px solid var(--color-border, #e0e0e0); border-radius:4px; font-family:var(--font-body-family, sans-serif);">
+    <h3 style="margin:0 0 12px; font-family:var(--font-body-family, sans-serif);">Send for approval</h3>
+    <label for="b2b-manager-email" style="display:block; margin-bottom:4px; font-size:14px;">Manager email *</label>
     <input
       type="email"
       id="b2b-manager-email"
-      placeholder="manager@azienda.com"
+      placeholder="manager@company.com"
       style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; margin-bottom:8px; box-sizing:border-box;"
     />
-    <label for="b2b-note" style="display:block; margin-bottom:4px; font-size:14px;">Nota (opzionale)</label>
+    <label for="b2b-note" style="display:block; margin-bottom:4px; font-size:14px;">Note (optional)</label>
     <textarea
       id="b2b-note"
       rows="2"
@@ -22,9 +22,9 @@
     ></textarea>
     <button
       id="b2b-submit-btn"
-      style="background:#008060; color:#fff; border:none; padding:12px 24px; border-radius:4px; font-size:16px; cursor:pointer; width:100%;"
+      style="background:var(--color-button, #008060); color:var(--color-button-text, #fff); border:none; padding:12px 24px; border-radius:4px; font-size:16px; cursor:pointer; width:100%; font-family:var(--font-body-family, sans-serif);"
     >
-      Invia per Approvazione
+      Submit for Approval
     </button>
     <div id="b2b-feedback" style="margin-top:8px; font-size:14px;"></div>
   </div>
@@ -41,8 +41,9 @@
     {
       "type": "text",
       "id": "junior_tag",
-      "label": "Tag cliente junior B2B",
-      "default": "b2b-junior"
+      "label": "B2B customer tag",
+      "default": "b2b-junior",
+      "info": "Customers with this tag will see the cart approval form instead of the checkout button."
     }
   ]
 }
