@@ -1,6 +1,9 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import crypto from 'node:crypto'
 import { validateProxySignature } from '../utils/proxy.server.js'
+
+beforeEach(() => { delete process.env.BYPASS_PROXY_HMAC })
+afterEach(() => { delete process.env.BYPASS_PROXY_HMAC })
 
 const SECRET = 'test-secret-key'
 
